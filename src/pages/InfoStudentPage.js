@@ -1,38 +1,53 @@
 import styled from "styled-components";
 import Header from "../components/Header";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { ThreeDots, TailSpin, RotatingLines } from "react-loader-spinner";
 
 export default function InfoStudentPage() {
-    const result = {
-        name: 'Jorge de Almeida',
-        cpf: '12345678910',
-        email: 'jorge@jorge.com',
-        picture: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNOPJnJlEmcKXk8Xus0YhyVmVHsyFsN0qcV8IQ4T4aKg&s',
-        turmas: [
-            {name: 'Turma 2', entrydate: '2023-03-02', exitdate: '2023-04-05'},
-            {name: 'Turma 3', entrydate: '2023-04-06', exitdate: null},
-        ]
-    }
+    const { id } = useParams()
+    const [student, setStudent] = useState(null)
+
+    useEffect(() => {
+        const promise = axios.get(`${process.env.REACT_APP_API_URL}/students/${id}`)
+        promise.then((res) => setStudent(res.data))
+        promise.catch((err) => console.log(err.response.data))
+        // eslint-disable-next-line
+    }, [id])
     return (
         <>
             <Header />
-            <Container>
+            {student ? <Container>
                 <h2>Registro de Estudante</h2>
-                <img src={result.picture} alt="student"/>
-                <h3>Nome Completo: {result.name}</h3>
-                <h3>CPF: {result.cpf}</h3>
-                <h3>E-mail: {result.email}</h3>
+                <img src={student.picture} alt="student" />
+                <h3>Nome Completo: {student.name}</h3>
+                <h3>CPF: {student.cpf}</h3>
+                <h3>E-mail: {student.email}</h3>
                 <h3>Turmas: </h3>
-                {result.turmas.map((turma) => {
+                {student.turmas.map((turma, index) => {
                     return (
-                        <ClassDiv>
+                        <ClassDiv key={index}>
                             <h4>{turma.name}</h4>
-                            <h3>Data de ingresso: {turma.entrydate}</h3>
-                            <h3>Data de saída: {turma.exitdate ? turma.exitdate : '-'}</h3>
+                            <h3>Data de ingresso: {turma.entrydate.split('T')[0]}</h3>
+                            <h3>Data de saída: {turma.exitdate ? turma.exitdate.split('T')[0] : '-'}</h3>
                         </ClassDiv>
                     )
                 })}
-            </Container>
-            
+            </Container> : <Container>
+                <ThreeDots
+                    height="80"
+                    width="80"
+                    radius="9"
+                    color="#696969"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClassName=""
+                    visible={true}
+                />
+            </Container>}
+
+
         </>
     )
 }
@@ -60,4 +75,5 @@ const ClassDiv = styled.div`
     height: 50px;
     border: solid 1px #696969;
     margin-left: 10px;
+    padding: 5px;
 `

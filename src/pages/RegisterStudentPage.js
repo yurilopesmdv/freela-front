@@ -15,12 +15,13 @@ export default function RegisterStudentPage() {
     const [cpf, setCpf] = useState("")
     const [email, setEmail] = useState("")
     const [picture, setPicture] = useState("")
-    const [turm, setTurm] = useState("")
+    const [turm, setTurm] = useState(0)
     const navigate = useNavigate()
     
     async function handleSubmit(e) {
         e.preventDefault()
-        const body = {name, cpf, email, picture, class: turm}
+        const body = {name, cpf, email, picture, classId: Number(turm)}
+        console.log(body)
         try {
             await axios.post(`${process.env.REACT_APP_API_URL}/register`, body)
             navigate('/')

@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import Header from "../components/Header";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function ListStudentsPage() {
     const classes = [
@@ -10,27 +11,29 @@ export default function ListStudentsPage() {
         {id: 3, name: 'Turma 3'},
         {id: 4, name: 'Turma 4'},
     ]
-    const students = [
-        { id: 1, name: 'Fulano de tal', picture: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNOPJnJlEmcKXk8Xus0YhyVmVHsyFsN0qcV8IQ4T4aKg&s"},
-        { id: 2, name: 'Ciclano de tal', picture: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNOPJnJlEmcKXk8Xus0YhyVmVHsyFsN0qcV8IQ4T4aKg&s"}
-    ]
-    const [classSelected, setClassSelected] = useState('')
+    const [students, setStudents] = useState([])
+    useEffect(() => {
+        const promise = axios.get(`${process.env.REACT_APP_API_URL}/students`)
+        promise.then((res) => setStudents(res.data))
+        promise.catch((err) => console.log(err.response.data))
+    }, [])
+    const [classSelected, setClassSelected] = useState(1)
     const navigate = useNavigate()
     function loadStudentPage(id) {
-        navigate(`profile/${id}`)
+        navigate(`students/${id}`)
     }
     return (
         <>
             <Header />
             <Container>
                 <SideBarClass>
-                    {classes.map((c, i) => <Filter onClick={() => setClassSelected(c.id)} selected={classSelected === c.id ? true : false} key={i}>{c.name}</Filter>)}
+                    {classes.map((c, i) => <Filter key={i} onClick={() => setClassSelected(c.id)} selected={classSelected === c.id ? true : false} >{c.name}</Filter>)}
                 </SideBarClass>
                 <Content>
                     <h2>Estudantes da Turma {classSelected}</h2>
-                    {students.map((s) => {
+                    {students.filter((s) => s.classid === classSelected).map((s,i) => {
                         return (
-                            <StudentCard onClick={() => loadStudentPage(s.id)}>
+                            <StudentCard key={i} onClick={() => loadStudentPage(s.id)}>
                                 <img src={s.picture} alt={s.name}/>
                                 <h4>{s.name}</h4>
                             </StudentCard>
