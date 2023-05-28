@@ -21,13 +21,12 @@ export default function RegisterStudentPage() {
     async function handleSubmit(e) {
         e.preventDefault()
         const body = {name, cpf, email, picture, classId: Number(turm)}
-        console.log(body)
         try {
             await axios.post(`${process.env.REACT_APP_API_URL}/register`, body)
             navigate('/')
         }catch(err) {
             console.log(err.message)
-    }
+        }
     }
     return (
         <>
