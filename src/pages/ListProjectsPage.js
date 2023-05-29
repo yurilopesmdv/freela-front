@@ -2,6 +2,7 @@ import styled from "styled-components";
 import Header from "../components/Header";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function ListProjectsPage() {
     const classes = [
@@ -15,11 +16,22 @@ export default function ListProjectsPage() {
     const [projectSelected, setProjectSelected] = useState('Globo')
     const [deliveries, setDeliveries] = useState([])
 
+    const navigate = useNavigate()
     useEffect(() => {
         const promise = axios.get(`${process.env.REACT_APP_API_URL}/projects`)
         promise.then((res) => setProjects(res.data))
         promise.catch((err) => console.log(err.response.data))
+
+        const secondPromise = axios.get(`${process.env.REACT_APP_API_URL}/deliveries`)
+        secondPromise.then((res) => setDeliveries(res.data))
+        secondPromise.catch((err) => console.log(err.response.data))
     }, [])
+    
+    function loadStudentDelivery(id) {
+        navigate(`/student/delivery/${id}`)
+    }
+    function doNothing(){}
+
     return (
         <>
             <Header />
@@ -33,16 +45,25 @@ export default function ListProjectsPage() {
                     </div>
                 </SideBarClass>
                 <Content>
-                        <h2>Projeto {projectSelected} na Turma {classSelected}</h2>
-                        {deliveries.filter((d) => d.classid === classSelected ).map((s, i) => {
-                            return (
-                                <StudentCard key={i} >
-                                    <img src={s.picture} alt={s.name} />
-                                    <h4>{s.name}</h4>
-                                </StudentCard>
-                            )
-                        })}
-                    </Content>
+                    <h2>Projeto {projectSelected} na Turma {classSelected}</h2>
+                    {deliveries.filter((d) => d.classid === classSelected && d.projectname === projectSelected).map((s, i) => {
+                        console.log(s.grade)
+                        return (
+                            <StudentCard key={i} >
+                                <div>
+                                    <img src={s.picture} alt={s.studentName} />
+                                    <h4>{s.studentName.toUpperCase()}</h4>
+                                </div>
+                                <div>
+                                <p>Link da Entrega:</p>
+                                <a href={s.projecturl}>{s.projecturl}</a>
+                                </div>
+                                
+                                <h5 onClick={s.grade ? doNothing : () => loadStudentDelivery(s.id)}>{s.grade ? s.grade : 'Sem nota'}</h5>
+                            </StudentCard>
+                        )
+                    })}
+                </Content>
             </Container>
         </>
     )
@@ -84,9 +105,9 @@ const Content = styled.div`
 `
 
 const StudentCard = styled.div`
-    cursor: pointer;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 0 15px;
     width: 80vw;
     height: 50px;
@@ -96,5 +117,19 @@ const StudentCard = styled.div`
         width: 25px;
         height: 25px;
         border-radius: 100%;
+    }
+    div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+    }
+    h5 {
+        cursor: pointer;
+        font-weight: 700;
+    }
+    a {
+        text-decoration: none;
+        color: #696969;
     }
 `

@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { ThreeDots, TailSpin, RotatingLines } from "react-loader-spinner";
+import { ThreeDots} from "react-loader-spinner";
 
 export default function InfoStudentPage() {
     const { id } = useParams()

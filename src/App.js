@@ -4,6 +4,7 @@ import ListStudentsPage from "./pages/ListStudentsPage.js"
 import InfoStudentPage from "./pages/InfoStudentPage.js"
 import DeliveryProjectPage from "./pages/DeliveryProjectPage.js"
 import ListProjectsPage from "./pages/ListProjectsPage.js"
+import { EditDeliveryPage } from "./pages/EditDeliveryPage.js"
 
 export default function App() {
     return (
@@ -14,6 +15,7 @@ export default function App() {
                 <Route path="/students/:id" element={<InfoStudentPage />} />
                 <Route path="/delivery" element={<DeliveryProjectPage />} />
                 <Route path="/projects" element={<ListProjectsPage />} />
+                <Route path="/student/delivery/:id" element={<EditDeliveryPage />} />
             </Routes>
         </BrowserRouter>
     )

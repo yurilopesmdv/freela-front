@@ -17,7 +17,6 @@ export default function DeliveryProjectPage() {
 
     const navigate = useNavigate()
 
-    console.log(id)
     useEffect(() => {
         const promise = axios.get(`${process.env.REACT_APP_API_URL}/classes`)
         promise.then((res) => setClasses([{},...res.data]))
